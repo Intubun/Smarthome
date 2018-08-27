@@ -27,14 +27,22 @@
 
 DHT dht(DHT_PIN, DHT_TYPE);
 
-void setup() {
-  // put your setup code here, to run once:
+uint16_t au16data[REGISTER] = {0};
+Modbus slave(ADR,BUS,TXEN);
 
+void setup() {
+  setup_modbus();
+  setup_light();
+  setup_dht();
+  setup_relay();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  dht_debug();
+  dht_modbus();
+  status_led_modbus();
+  relay_modbus();
+  poll_modbus();
 }
 void dht_modbus(){
   au16data[TEMP_R] = ((dht.readTemperature()*10)+400);
@@ -58,4 +66,34 @@ void setup_light() {
 
 void status_led_modbus() {
   digitalWrite(Status_LED, bitRead(au16data[LED_R], 0));
+  }
+
+void setup_modbus() {
+  slave.begin(BAUD);
+  }
+
+void poll_modbus() {
+  slave.poll();
+  }
+
+void setup_relay() {
+  pinMode(R1, OUTPUT);
+  pinMode(R2, OUTPUT);
+  pinMode(R3, OUTPUT);
+  pinMode(R4, OUTPUT);
+  pinMode(R5, OUTPUT);
+  pinMode(R6, OUTPUT);
+  pinMode(R7, OUTPUT);
+  pinMode(R8, OUTPUT);
+  }
+
+void relay_modbus() {
+  digitalWrite(R1, bitRead(au16data[RELAY_R], 0));
+  digitalWrite(R2, bitRead(au16data[RELAY_R], 1));
+  digitalWrite(R3, bitRead(au16data[RELAY_R], 2));
+  digitalWrite(R4, bitRead(au16data[RELAY_R], 3));
+  digitalWrite(R5, bitRead(au16data[RELAY_R], 4));
+  digitalWrite(R6, bitRead(au16data[RELAY_R], 5));
+  digitalWrite(R7, bitRead(au16data[RELAY_R], 6));
+  digitalWrite(R8, bitRead(au16data[RELAY_R], 7));
   }
