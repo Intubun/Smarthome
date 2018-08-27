@@ -1,3 +1,4 @@
+
 #include "Smart_Settings.h"
 #include "Smart_Libarys.h"
 
@@ -10,6 +11,9 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  dht_debug();
+  dht_modbus();
+  status_led_modbus();
+  relay_modbus();
+  poll_modbus();
 }
